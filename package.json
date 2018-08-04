@@ -1,0 +1,14 @@
+{
+  "name": "nelnet-payment-collector",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Toan Tran",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^1.6.2"
+  }
+}
