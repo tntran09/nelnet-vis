@@ -1,3 +1,6 @@
+# Don't commit credentials
+credentials.js
+
 # Logs
 logs
 *.log
