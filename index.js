@@ -42,34 +42,44 @@ const fs = require('fs');
   await page.waitForSelector('tbody tr:nth-child(11)');
 
   // click each item and collect data
-  let paymentCount = await page.$('tbody tr').length;
+  let allPayments = [];
+  let paymentCount = (await page.$$('tbody tr')).length;
+  paymentCount--; // Last row is totals
+  console.log(paymentCount + ' payment count');
+
   // foreach row
-  let paymentRecord = await page.$('tbody tr:nth-child(50) td:nth-child(1) a');
-  var paymentDate = await page.$eval('tbody tr:nth-child(50) td:nth-child(1) a', element => element.innerText.trim());
+  for(let i = 1; i <= paymentCount; i++) {
+    let paymentRecord = await page.$('tbody tr:nth-child(' + i + ') td:nth-child(1) a');
+    let paymentDate = await page.$eval('tbody tr:nth-child(' + i + ') td:nth-child(1) a', element => element.innerText.trim());
 
-  await paymentRecord.click();
-  await page.waitForSelector('#payment-info')
+    await paymentRecord.click();
+    await page.waitForSelector('#payment-info')
 
-  // Get all the rows (payment groups)
-  let paymentGroups = await page.$$eval('tbody tr', async(rows) => {
-    rows.pop(); // Last table row is totals
+    // Get all the rows (payment groups)
+    let paymentGroups = await page.$$eval('tbody tr', async(rows, paymentDate) => {
+      rows.pop(); // Last table row is totals
 
-    return rows.map(tr => {
-      let cells = Array.from(tr.querySelectorAll('td')).map(td => td.innerText.trim());
+      return rows.map(tr => {
+        let cells = Array.from(tr.querySelectorAll('td')).map(td => td.innerText.trim());
 
-      return {
-        paymentDate: paymentDate,
-        groupName: cells[0],
-        appliedToPrincipal: cells[1],
-        appliedToInterest: cells[2],
-        appliedToFees: cells[3]
-      };
-    })
-  });
+        return {
+          paymentDate: paymentDate,
+          groupName: cells[0],
+          appliedToPrincipal: cells[1],
+          appliedToInterest: cells[2],
+          appliedToFees: cells[3]
+        };
+      });
+    }, paymentDate);
 
-  console.log(paymentGroups);
+    allPayments = allPayments.concat(paymentGroups);
 
-  // await page.click('a.back-icon');
+    await page.click('a.back-icon');
+  }
 
-  // await browser.close();
+  if (allPayments.length > 0) {
+    fs.writeFileSync('output.json', JSON.stringify(allPayments));
+  };
+
+  await browser.close();
 })();
