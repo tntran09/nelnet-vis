@@ -10,8 +10,8 @@ const fs = require('fs');
   await page.goto('https://www.nelnet.com/welcome');
 
   // Fill in #username and click #submit-username
-  await page.waitForSelector('#username', {timeout: 10000});
   // Nelnet disables input until page is finished loading
+  await page.waitForSelector('#username', {timeout: 10000});
   await page.waitForFunction(
     (input) => !input.disabled,
     {polling: 2000, timeout: 10000},
@@ -21,8 +21,8 @@ const fs = require('fs');
   await page.click('#submit-username');
 
   // fill in #Password and click #submit-password
-  await page.waitForSelector('#Password', {timeout: 10000});
   // Nelnet disables input until username is submitted
+  await page.waitForSelector('#Password', {timeout: 10000});
   await page.waitForFunction(
     (input) => !input.disabled,
     {polling: 2000, timeout: 10000},
@@ -43,11 +43,9 @@ const fs = require('fs');
 
   // click each item and collect data
   let allPayments = [];
-  let paymentCount = (await page.$$('tbody tr')).length;
-  paymentCount--; // Last row is totals
+  let paymentCount = (await page.$$('tbody tr')).length - 1; // Last row is totals
   console.log(paymentCount + ' payment count');
 
-  // foreach row
   for(let i = 1; i <= paymentCount; i++) {
     let paymentRecord = await page.$('tbody tr:nth-child(' + i + ') td:nth-child(1) a');
     let paymentDate = await page.$eval('tbody tr:nth-child(' + i + ') td:nth-child(1) a', element => element.innerText.trim());
@@ -62,12 +60,13 @@ const fs = require('fs');
       return rows.map(tr => {
         let cells = Array.from(tr.querySelectorAll('td')).map(td => td.innerText.trim());
 
+        // Assuming all payments are under $1000 which avoids trying to parse commas in numbers
         return {
           paymentDate: paymentDate,
           groupName: cells[0],
-          appliedToPrincipal: cells[1],
-          appliedToInterest: cells[2],
-          appliedToFees: cells[3]
+          appliedToPrincipal: Number(cells[2].substring(1)),
+          appliedToInterest: Number(cells[3].substring(1)),
+          appliedToFees: Number(cells[4].substring(1))
         };
       });
     }, paymentDate);
@@ -78,7 +77,18 @@ const fs = require('fs');
   }
 
   if (allPayments.length > 0) {
-    fs.writeFileSync('output.json', JSON.stringify(allPayments));
+    // Manually filled in original loan amounts
+    const data = {
+      groups: {
+       A: 2298.86,
+       B: 2835,
+       C: 4749,
+       D: 3075
+      },
+      payments: allPayments
+    };
+
+    fs.writeFileSync('data.json', JSON.stringify(data, null, 1));
   };
 
   await browser.close();

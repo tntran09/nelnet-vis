@@ -1,7 +1,5 @@
 # Don't commit credentials
 credentials.js
-# Don't commit the output
-output.json
 
 # Logs
 logs
