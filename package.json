@@ -1,14 +1,21 @@
 {
-  "name": "nelnet-payment-collector",
+  "name": "nelnet-vis",
   "version": "0.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
   },
   "author": "Toan Tran",
   "license": "ISC",
   "dependencies": {
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-scripts": "1.1.4"
+  },
+  "devDependencies": {
     "puppeteer": "^1.6.2"
   }
 }
