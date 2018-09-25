@@ -30,10 +30,17 @@ export default class GraphSvg extends React.Component {
     for(let group of this.state.groups) {
       var groupPayments = this.state.paymentsByGroup[group];
       var series = [{
+        x: this.state.minDate,
+        y: 0
+      }, {
+        x: groupPayments[0].paymentDate,
+        y: 0
+      }, {
         x: groupPayments[0].paymentDate,
         y: groupPayments[0].appliedToPrincipal
       }];
 
+      // Add 2 points: <x(i+1), y(i)> <x(i+1), y(i+1)>
       for(var i = 1; i < groupPayments.length; i++) {
         series.push({
           x: groupPayments[i].paymentDate,
@@ -47,10 +54,11 @@ export default class GraphSvg extends React.Component {
         });
       }
 
-      // series.push({
-      //   x: new Date(this.state.maxDate),
-      //   y: series[series.length - 1].y
-      // });
+      series.push({
+        x: this.state.maxDate,
+        y: series[series.length - 1].y
+      });
+      console.log(series[series.length-1]);
 
       allSeries.push(
         <LineSeries key={group} data={series} />
@@ -71,11 +79,12 @@ export default class GraphSvg extends React.Component {
     var maxDate = minDate;
 
     var paymentsByGroup = payments.reduce((aggregate, current) => {
-      minDate = Math.min(minDate, current.paymentDate);
-      maxDate = Math.max(minDate, current.paymentDate);
+      var date = new Date(current.paymentDate);
+      minDate = Math.min(minDate, date);
+      maxDate = Math.max(maxDate, date);
 
       aggregate[current.groupName].push({
-        paymentDate: new Date(current.paymentDate),
+        paymentDate: date,
         appliedToPrincipal: current.appliedToPrincipal,
         appliedToInterest: current.appliedToInterest
       });
@@ -90,8 +99,8 @@ export default class GraphSvg extends React.Component {
     return {
       groups: groupNames,
       height: 600,
-      maxDate: maxDate,
-      minDate: minDate,
+      maxDate: new Date(maxDate),
+      minDate: new Date(minDate),
       paymentsByGroup: paymentsByGroup,
       width: 800
     };
