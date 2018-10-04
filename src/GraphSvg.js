@@ -1,6 +1,5 @@
 import React from 'react';
-import 'react-vis/dist/style.css';
-import { XYPlot, XAxis, YAxis, HorizontalGridLines, VerticalGridLines, LineSeries } from 'react-vis';
+import { XYPlot, XAxis, YAxis, HorizontalGridLines, VerticalGridLines, LineSeries, DiscreteColorLegend } from 'react-vis';
 
 export default class GraphSvg extends React.Component {
   constructor(props) {
@@ -19,6 +18,7 @@ export default class GraphSvg extends React.Component {
           <HorizontalGridLines />
           <VerticalGridLines />
           {allSeries}
+          <DiscreteColorLegend items={this.state.groups} orientation="horizontal" />
         </XYPlot>
       </div>
     );
@@ -58,7 +58,6 @@ export default class GraphSvg extends React.Component {
         x: this.state.maxDate,
         y: series[series.length - 1].y
       });
-      console.log(series[series.length-1]);
 
       allSeries.push(
         <LineSeries key={group} data={series} />
