@@ -1,8 +1,7 @@
 import React from 'react';
 import './App.css';
-import 'react-vis/dist/style.css';
 import GraphSvg from './GraphSvg';
-import { groups, payments } from './data.json';
+import { groups, payments } from '../data.json';
 
 class App extends React.Component {
   render() {
