@@ -77,6 +77,8 @@ const fs = require('fs');
   }
 
   if (allPayments.length > 0) {
+    // Reverse the payments as they were collected in Most Recent order
+    allPayments.reverse();
     // Manually filled in original loan amounts
     const data = {
       groups: {
@@ -88,7 +90,7 @@ const fs = require('fs');
       payments: allPayments
     };
 
-    fs.writeFileSync('data.json', JSON.stringify(data, null, 1));
+    fs.writeFileSync('src/data/data.json', JSON.stringify(data, null, 1));
   };
 
   await browser.close();

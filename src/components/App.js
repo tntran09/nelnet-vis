@@ -7,7 +7,7 @@ import Paper from '@material-ui/core/Paper';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import GraphSvg from './GraphSvg';
-import { groups, payments } from '../data.json';
+import { groups, payments } from '../data/data.json';
 
 class App extends React.Component {
   render() {
