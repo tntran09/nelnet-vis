@@ -19,5 +19,6 @@
   },
   "devDependencies": {
     "puppeteer": "^1.6.2"
-  }
+  },
+  "homepage": "https://tntran09.github.io/nelnet-vis"
 }
