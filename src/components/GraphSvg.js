@@ -1,10 +1,11 @@
 import React from 'react';
 import { XYPlot, XAxis, YAxis, HorizontalGridLines, VerticalGridLines, LineSeries, DiscreteColorLegend } from 'react-vis';
+import store from '../stores/store'
 
 export default class GraphSvg extends React.Component {
   constructor(props) {
     super(props);
-    this.state = this._getState(props.groups, props.payments);
+    this.state = this._getState(store.getState());
   }
 
   render() {
@@ -13,7 +14,7 @@ export default class GraphSvg extends React.Component {
     return (
       <div style={{margin: 'auto', width: this.state.width}}>
         <XYPlot width={this.state.width} height={this.state.height} xType="time" style={{padding: '10px'}}>
-          <XAxis />
+          <XAxis tickValues={this.state.xTickValues} />
           <YAxis />
           <HorizontalGridLines />
           <VerticalGridLines />
@@ -67,40 +68,19 @@ export default class GraphSvg extends React.Component {
     return allSeries;
   }
 
-  _getState(groups, payments) {
-    var groupNames = Object.keys(groups);
-    var paymentsByGroup = {};
-    for(let group of groupNames) {
-      paymentsByGroup[group] = [];
-    }
-
-    var minDate = new Date(payments[0].paymentDate);
-    var maxDate = minDate;
-
-    var paymentsByGroup = payments.reduce((aggregate, current) => {
-      var date = new Date(current.paymentDate);
-      minDate = Math.min(minDate, date);
-      maxDate = Math.max(maxDate, date);
-
-      aggregate[current.groupName].push({
-        paymentDate: date,
-        appliedToPrincipal: current.appliedToPrincipal,
-        appliedToInterest: current.appliedToInterest
-      });
-
-      return aggregate;
-    }, paymentsByGroup);
-
-    for(var group in paymentsByGroup) {
-      paymentsByGroup[group].sort((a,b) => a.paymentDate - b.paymentDate);
+  _getState(appState) {
+    var xTickValues = [];
+    for(let i = appState.minDate.getFullYear(); i <= appState.maxDate.getFullYear(); i++) {
+      xTickValues.push(new Date(i, 0, 1));
     }
 
     return {
-      groups: groupNames,
+      groups: appState.groups,
       height: 600,
-      maxDate: new Date(maxDate),
-      minDate: new Date(minDate),
-      paymentsByGroup: paymentsByGroup,
+      maxDate: new Date(appState.maxDate),
+      minDate: new Date(appState.minDate),
+      paymentsByGroup: appState.paymentsByGroup,
+      xTickValues: xTickValues,
       width: 800
     };
   }

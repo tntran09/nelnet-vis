@@ -7,9 +7,14 @@ import Paper from '@material-ui/core/Paper';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import GraphSvg from './GraphSvg';
-import { groups, payments } from '../data/data.json';
+import store from '../stores/store';
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = store.getState();
+  }
+
   render() {
     return (
       <div className="App">
@@ -31,7 +36,7 @@ class App extends React.Component {
           </Grid>
           <Grid item xs={8}>
             <Paper>
-              <GraphSvg groups={groups} payments={payments} />
+              <GraphSvg />
             </Paper>
           </Grid>
         </Grid>
