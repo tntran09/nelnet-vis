@@ -17,7 +17,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <div className="App">
+      <div className="App" style={{overflow:'hidden'}}>
         <Grid container spacing={16}>
           <AppBar position="static">
             <Toolbar>

@@ -5,15 +5,15 @@ import store from '../stores/store'
 export default class GraphSvg extends React.Component {
   constructor(props) {
     super(props);
-    this.state = this._getState(store.getState());
+    this.state = this._getUIState(store.getState());
   }
 
   render() {
     var allSeries = this._generateSeries();
 
     return (
-      <div style={{margin: 'auto', width: this.state.width}}>
-        <XYPlot width={this.state.width} height={this.state.height} xType="time" style={{padding: '10px'}}>
+      <div style={{margin: 'auto', width: this.state.width, height: 680}}>
+        <XYPlot width={this.state.width} height={this.state.height} xType="time" margin={{left: 50, right: 50}} style={{padding: '10px'}}>
           <XAxis tickValues={this.state.xTickValues} />
           <YAxis />
           <HorizontalGridLines />
@@ -68,17 +68,17 @@ export default class GraphSvg extends React.Component {
     return allSeries;
   }
 
-  _getState(appState) {
+  _getUIState(appState) {
     var xTickValues = [];
-    for(let i = appState.minDate.getFullYear(); i <= appState.maxDate.getFullYear(); i++) {
+    for(let i = appState.minDate.getFullYear(); i <= appState.maxDate.getFullYear()+1; i++) {
       xTickValues.push(new Date(i, 0, 1));
     }
 
     return {
       groups: appState.groups,
       height: 600,
-      maxDate: new Date(appState.maxDate),
-      minDate: new Date(appState.minDate),
+      maxDate: appState.maxDate,
+      minDate: appState.minDate,
       paymentsByGroup: appState.paymentsByGroup,
       xTickValues: xTickValues,
       width: 800
