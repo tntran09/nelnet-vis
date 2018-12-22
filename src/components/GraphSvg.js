@@ -1,5 +1,14 @@
 import React from 'react';
-import { XYPlot, XAxis, YAxis, HorizontalGridLines, VerticalGridLines, LineSeries, DiscreteColorLegend } from 'react-vis';
+import {
+  Crosshair,
+  DiscreteColorLegend,
+  HorizontalGridLines,
+  LineSeries,
+  VerticalGridLines,
+  XAxis,
+  XYPlot,
+  YAxis
+} from 'react-vis';
 import store from '../stores/store'
 
 export default class GraphSvg extends React.Component {
@@ -60,6 +69,7 @@ export default class GraphSvg extends React.Component {
         y: series[series.length - 1].y
       });
 
+      // onNearestX
       allSeries.push(
         <LineSeries key={group} data={series} />
       );
@@ -75,6 +85,7 @@ export default class GraphSvg extends React.Component {
     }
 
     return {
+      crosshairValues: {},
       groups: appState.groups,
       height: 600,
       maxDate: appState.maxDate,
@@ -83,5 +94,13 @@ export default class GraphSvg extends React.Component {
       xTickValues: xTickValues,
       width: 800
     };
+  }
+
+  _onNearestX(value, {innerX, index}) {
+    var values = [];
+    for(let group of this.state.groups) {
+      values.push(this.state.paymentsByGroup[index]);
+    }
+    this.setState({crosshairValues: values})
   }
 }

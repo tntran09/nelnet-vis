@@ -33,11 +33,12 @@ for(var group in paymentsByGroup) {
 }
 
 var initialState = {
-  // Fixed portion of the state (per data set)
+  // Fixed portion of the state (per data set, function)
   groups: groupNames,
   maxDate: maxDate,
   minDate: minDate,
-  paymentsByGroup: paymentsByGroup
+  paymentsByGroup: paymentsByGroup,
+  seriesData: []
 }
 
 function baseReducer(state = initialState, action) {
