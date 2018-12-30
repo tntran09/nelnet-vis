@@ -28,6 +28,9 @@ export default class GraphSvg extends React.Component {
           <HorizontalGridLines />
           <VerticalGridLines />
           {allSeries}
+          <Crosshair values={this.state.crosshairValues}>
+            {this.state.crosshairValues}
+          </Crosshair>
           <DiscreteColorLegend items={this.state.groups} orientation="horizontal" />
         </XYPlot>
       </div>
@@ -39,6 +42,8 @@ export default class GraphSvg extends React.Component {
 
     for(let group of this.state.groups) {
       var groupPayments = this.state.paymentsByGroup[group];
+
+      // Set the first 3 points of the line <0, 0> <x1, 0> <x1, y1>
       var series = [{
         x: this.state.minDate,
         y: 0
@@ -50,7 +55,7 @@ export default class GraphSvg extends React.Component {
         y: groupPayments[0].appliedToPrincipal
       }];
 
-      // Add 2 points: <x(i+1), y(i)> <x(i+1), y(i+1)>
+      // Add 2 points to make a stepped line: <x(i+1), y(i)> <x(i+1), y(i+1)>
       for(var i = 1; i < groupPayments.length; i++) {
         series.push({
           x: groupPayments[i].paymentDate,
@@ -85,7 +90,7 @@ export default class GraphSvg extends React.Component {
     }
 
     return {
-      crosshairValues: {},
+      crosshairValues: [],
       groups: appState.groups,
       height: 600,
       maxDate: appState.maxDate,
@@ -97,10 +102,15 @@ export default class GraphSvg extends React.Component {
   }
 
   _onNearestX(value, {innerX, index}) {
-    var values = [];
+    var values = [
+      <p key="date">{innerX}</p>
+    ];
     for(let group of this.state.groups) {
-      values.push(this.state.paymentsByGroup[index]);
+      values.push(
+        <p key={group}>{group}: {this.state.paymentsByGroup[group][index].appliedToPrincipal}</p>
+      );
     }
+
     this.setState({crosshairValues: values})
   }
 }
