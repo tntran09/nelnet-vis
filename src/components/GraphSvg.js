@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Crosshair,
   DiscreteColorLegend,
   HorizontalGridLines,
   LineSeries,
@@ -28,9 +27,6 @@ export default class GraphSvg extends React.Component {
           <HorizontalGridLines />
           <VerticalGridLines />
           {allSeries}
-          <Crosshair values={this.state.crosshairValues}>
-            {this.state.crosshairValues}
-          </Crosshair>
           <DiscreteColorLegend items={this.state.groups} orientation="horizontal" />
         </XYPlot>
       </div>
@@ -74,7 +70,6 @@ export default class GraphSvg extends React.Component {
         y: series[series.length - 1].y
       });
 
-      // onNearestX
       allSeries.push(
         <LineSeries key={group} data={series} />
       );
@@ -90,7 +85,6 @@ export default class GraphSvg extends React.Component {
     }
 
     return {
-      crosshairValues: [],
       groups: appState.groups,
       height: 600,
       maxDate: appState.maxDate,
@@ -99,18 +93,5 @@ export default class GraphSvg extends React.Component {
       xTickValues: xTickValues,
       width: 800
     };
-  }
-
-  _onNearestX(value, {innerX, index}) {
-    var values = [
-      <p key="date">{innerX}</p>
-    ];
-    for(let group of this.state.groups) {
-      values.push(
-        <p key={group}>{group}: {this.state.paymentsByGroup[group][index].appliedToPrincipal}</p>
-      );
-    }
-
-    this.setState({crosshairValues: values})
   }
 }
