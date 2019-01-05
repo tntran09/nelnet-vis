@@ -1,5 +1,6 @@
 import { createStore } from 'redux';
 import { groups, payments } from '../data/data.json';
+import PaymentsAppliedGenerator from '../generators/PaymentsAppliedGenerator';
 
 var groupNames = Object.keys(groups);
 var paymentsByGroup = {};
@@ -28,6 +29,7 @@ var paymentsByGroup = payments.reduce((aggregate, current) => {
 minDate = new Date(minDate.getFullYear(), 0, 1);
 maxDate = new Date(maxDate.getFullYear(), 11, 31);
 
+// Sort by payment date ascending
 for(var group in paymentsByGroup) {
   paymentsByGroup[group].sort((a,b) => a.paymentDate - b.paymentDate);
 }
@@ -38,8 +40,11 @@ var initialState = {
   maxDate: maxDate,
   minDate: minDate,
   paymentsByGroup: paymentsByGroup,
+  selectedFunction: 'paymentsApplied', // enum?
   seriesData: []
 }
+
+initialState.seriesData = PaymentsAppliedGenerator.call(null, initialState);
 
 function baseReducer(state = initialState, action) {
   // No actions defined
