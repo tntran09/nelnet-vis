@@ -1,7 +1,7 @@
 export default function(state) {
   var allSeries = [];
 
-  for(let group of state.groups) {
+  for (let group of state.groups) {
     var groupPayments = state.paymentsByGroup[group];
 
     // Set the first 3 points of the line <0, 0> <x1, 0> <x1, y1>
@@ -16,6 +16,7 @@ export default function(state) {
       y: groupPayments[0].appliedToPrincipal
     }];
 
+    // May be able to eliminate 2nd and 3rd points above
     // Add 2 points to make a stepped line: <x(i+1), y(i)> <x(i+1), y(i+1)>
     for(var i = 1; i < groupPayments.length; i++) {
       series.push({

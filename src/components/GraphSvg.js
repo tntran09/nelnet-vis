@@ -14,6 +14,7 @@ export default class GraphSvg extends React.Component {
   constructor(props) {
     super(props);
     this.state = this._getUIState(store.getState());
+    store.subscribe(() => this.setState(this._getUIState(store.getState())));
   }
 
   render() {

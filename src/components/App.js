@@ -7,12 +7,23 @@ import Paper from '@material-ui/core/Paper';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import GraphSvg from './GraphSvg';
+import Functions from '../models/Functions';
 import store from '../stores/store';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = store.getState();
+    store.subscribe(() => this.setState(store.getState()));
+  }
+
+  _selectFunction(functionName) {
+    this.setState(
+      store.dispatch({
+        type: 'selectFunction',
+        selectedFunction: functionName
+      })
+    );
   }
 
   render() {
@@ -28,9 +39,9 @@ class App extends React.Component {
           <Grid item xs={3}>
             <Paper>
               <MenuList>
-                <MenuItem selected={true}>Payments Applied</MenuItem>
-                <MenuItem>Principal Remaining</MenuItem>
-                <MenuItem>Applied to Interest</MenuItem>
+                <MenuItem onClick={this._selectFunction.bind(this, Functions.TotalApplied)} selected={this.state.selectedFunction === Functions.TotalApplied}>Payments Applied</MenuItem>
+                <MenuItem selected={false}>Principal Remaining</MenuItem>
+                <MenuItem onClick={this._selectFunction.bind(this, Functions.InterestAccrued)} selected={this.state.selectedFunction === Functions.InterestAccrued}>Interest Accrued</MenuItem>
               </MenuList>
             </Paper>
           </Grid>

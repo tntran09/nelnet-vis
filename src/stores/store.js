@@ -1,6 +1,8 @@
 import { createStore } from 'redux';
 import { groups, payments } from '../data/data.json';
+import InterestAccruedGenerator from '../generators/InterestAccruedGenerator';
 import PaymentsAppliedGenerator from '../generators/PaymentsAppliedGenerator';
+import Functions from '../models/Functions';
 
 var groupNames = Object.keys(groups);
 var paymentsByGroup = {};
@@ -11,7 +13,7 @@ for(let group of groupNames) {
 var minDate = new Date(payments[0].paymentDate);
 var maxDate = minDate;
 
-var paymentsByGroup = payments.reduce((aggregate, current) => {
+paymentsByGroup = payments.reduce((aggregate, current) => {
   var date = new Date(current.paymentDate);
   minDate = new Date(Math.min(minDate, date));
   maxDate = new Date(Math.max(maxDate, date));
@@ -40,15 +42,42 @@ var initialState = {
   maxDate: maxDate,
   minDate: minDate,
   paymentsByGroup: paymentsByGroup,
-  selectedFunction: 'paymentsApplied', // enum?
+  // Variable portion of the state
+  selectedFunction: Functions.TotalApplied,
   seriesData: []
 }
-
-initialState.seriesData = PaymentsAppliedGenerator.call(null, initialState);
+initialState = selectFunction(initialState, initialState.selectedFunction);
 
 function baseReducer(state = initialState, action) {
-  // No actions defined
+  switch(action.type) {
+    case 'selectFunction':
+      return selectFunction(state, action.selectedFunction);
+    default:
+      break;
+  }
+
   return state;
+}
+
+function selectFunction(state, selectedFunction) {
+  var seriesData = [];
+
+  switch(selectedFunction) { // if action == functionChanged, switch action.selectedFunction
+    case Functions.InterestAccrued:
+      seriesData = InterestAccruedGenerator.call(null, state);
+      break;
+    case Functions.TotalApplied:
+      seriesData = PaymentsAppliedGenerator.call(null, state);
+      break;
+    default:
+      break;
+  }
+
+  return {
+    ...state,
+    selectedFunction: selectedFunction,
+    seriesData: seriesData,
+  };
 }
 
 const store = createStore(baseReducer, initialState);
