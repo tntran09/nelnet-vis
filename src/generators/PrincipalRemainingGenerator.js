@@ -3,22 +3,25 @@ export default function(state) {
 
   for (let group of state.groups) {
     var groupPayments = state.paymentsByGroup[group];
+    var originalAmount = groupPayments.reduce((aggregate, current) => aggregate + current.appliedToPrincipal, 0)
 
     var series = [
-      { x: state.minDate, y: 0 }
+      { x: state.minDate, y: originalAmount }
     ];
 
-    // No partial payments to interest, so assume that it accrues linearly until the next payment
     for (var i = 0; i < groupPayments.length; i++) {
       series.push({
         x: groupPayments[i].paymentDate,
-        y: series[series.length - 1].y + groupPayments[i].appliedToInterest
+        y: series[series.length - 1].y
+      }, {
+        x: groupPayments[i].paymentDate,
+        y: series[series.length - 1].y - groupPayments[i].appliedToPrincipal
       });
     }
 
     series.push({
       x: state.maxDate,
-      y: series[series.length - 1].y
+      y: series[series.length - 1].y // Should be 0
     });
 
     allSeries.push({

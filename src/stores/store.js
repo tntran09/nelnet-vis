@@ -2,6 +2,7 @@ import { createStore } from 'redux';
 import { groups, payments } from '../data/data.json';
 import InterestAccruedGenerator from '../generators/InterestAccruedGenerator';
 import PaymentsAppliedGenerator from '../generators/PaymentsAppliedGenerator';
+import PrincipalRemainingGenerator from '../generators/PrincipalRemainingGenerator';
 import Functions from '../models/Functions';
 
 var groupNames = Object.keys(groups);
@@ -65,6 +66,9 @@ function selectFunction(state, selectedFunction) {
   switch(selectedFunction) { // if action == functionChanged, switch action.selectedFunction
     case Functions.InterestAccrued:
       seriesData = InterestAccruedGenerator.call(null, state);
+      break;
+    case Functions.PrincipalRemaining:
+      seriesData = PrincipalRemainingGenerator.call(null, state);
       break;
     case Functions.TotalApplied:
       seriesData = PaymentsAppliedGenerator.call(null, state);

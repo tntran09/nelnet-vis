@@ -40,7 +40,7 @@ class App extends React.Component {
             <Paper>
               <MenuList>
                 <MenuItem onClick={this._selectFunction.bind(this, Functions.TotalApplied)} selected={this.state.selectedFunction === Functions.TotalApplied}>Payments Applied</MenuItem>
-                <MenuItem selected={false}>Principal Remaining</MenuItem>
+                <MenuItem onClick={this._selectFunction.bind(this, Functions.PrincipalRemaining)} selected={this.state.selectedFunction === Functions.PrincipalRemaining}>Principal Remaining</MenuItem>
                 <MenuItem onClick={this._selectFunction.bind(this, Functions.InterestAccrued)} selected={this.state.selectedFunction === Functions.InterestAccrued}>Interest Accrued</MenuItem>
               </MenuList>
             </Paper>
