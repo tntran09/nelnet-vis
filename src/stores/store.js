@@ -50,6 +50,7 @@ var initialState = {
 initialState = selectFunction(initialState, initialState.selectedFunction);
 
 function baseReducer(state = initialState, action) {
+  // TODO: Use const action types
   switch(action.type) {
     case 'selectFunction':
       return selectFunction(state, action.selectedFunction);

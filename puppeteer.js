@@ -3,12 +3,20 @@ const credentials = require('./credentials');
 const fs = require('fs');
 
 (async() => {
+  let groups = {};
+  let allPayments = [];
   // const browser = await puppeteer.launch();
   const browser = await puppeteer.launch({headless: false});
   const page = await browser.newPage();
 
   await page.goto('https://www.nelnet.com/welcome');
 
+  await Login();
+  await NavigateToHistory();
+  await CollectPayments();
+  await CollectPrincipalLoans();
+
+async function Login() {
   // Fill in #username and click #submit-username
   // Nelnet disables input until page is finished loading
   await page.waitForSelector('#username', {timeout: 10000});
@@ -31,8 +39,11 @@ const fs = require('fs');
   await page.keyboard.type(credentials.PASSWORD);
   await page.click('#submit-password');
 
-  // Go to history
   await page.waitForNavigation();
+}
+
+async function NavigateToHistory() {
+  // Go to history
   await page.goto('https://www.nelnet.com/Payment/History');
 
   // Expand full history
@@ -40,9 +51,10 @@ const fs = require('fs');
   await page.click('ul.pager li:nth-child(2)');
   // Wait for table to expand to something greater than 10
   await page.waitForSelector('tbody tr:nth-child(11)');
+}
 
+async function CollectPayments() {
   // click each item and collect data
-  let allPayments = [];
   let paymentCount = (await page.$$('tbody tr')).length - 1; // Last row is totals
   console.log(paymentCount + ' payment count');
 
@@ -75,18 +87,33 @@ const fs = require('fs');
 
     await page.click('a.back-icon');
   }
+}
+
+async function CollectPrincipalLoans() {
+  // Go to Loan Summary
+  await page.goto('https://www.nelnet.com/Docs/Index?LoanSummary');
+
+  await page.waitForSelector('div[ng-show*=EdLoans]', {timeout: 10000});
+  let edLoansTable = await page.$('div.table-responsive[ng-show*=EdLoans] tbody');
+  groups = await edLoansTable.$$eval('tr', (rows) => {
+    // First row is table headers
+    rows.shift();
+
+    return rows.reduce((groups, tr) => {
+      let cells = Array.from(tr.querySelectorAll('td')).map(td => td.innerText.trim());
+      groups[cells[0]] = Number(cells[4].substring(1).replace(',', ''));
+
+      return groups;
+    }, { });
+  });
+}
 
   if (allPayments.length > 0) {
     // Reverse the payments as they were collected in Most Recent order
     allPayments.reverse();
     // Manually filled in original loan amounts
     const data = {
-      groups: {
-       A: 2298.86,
-       B: 2835,
-       C: 4749,
-       D: 3075
-      },
+      groups: groups,
       payments: allPayments
     };
 
