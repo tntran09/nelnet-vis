@@ -15,6 +15,8 @@ const fs = require('fs');
   await NavigateToHistory();
   await CollectPayments();
   await CollectPrincipalLoans();
+  OutputData();
+  await browser.close();
 
 async function Login() {
   // Fill in #username and click #submit-username
@@ -67,18 +69,19 @@ async function CollectPayments() {
 
     // Get all the rows (payment groups)
     let paymentGroups = await page.$$eval('tbody tr', async(rows, paymentDate) => {
-      rows.pop(); // Last table row is totals
+      // Last table row is totals
+      rows.pop();
 
       return rows.map(tr => {
         let cells = Array.from(tr.querySelectorAll('td')).map(td => td.innerText.trim());
 
-        // Assuming all payments are under $1000 which avoids trying to parse commas in numbers
+        // Remove currency symbol and commas to parse the amounts
         return {
           paymentDate: paymentDate,
           groupName: cells[0],
-          appliedToPrincipal: Number(cells[2].substring(1)),
-          appliedToInterest: Number(cells[3].substring(1)),
-          appliedToFees: Number(cells[4].substring(1))
+          appliedToPrincipal: Number(cells[2].substring(1).replace(',', '')),
+          appliedToInterest: Number(cells[3].substring(1).replace(',', '')),
+          appliedToFees: Number(cells[4].substring(1).replace(',', ''))
         };
       });
     }, paymentDate);
@@ -93,13 +96,15 @@ async function CollectPrincipalLoans() {
   // Go to Loan Summary
   await page.goto('https://www.nelnet.com/Docs/Index?LoanSummary');
 
-  await page.waitForSelector('div[ng-show*=EdLoans]', {timeout: 10000});
+  await page.waitForSelector('div.table-responsive[ng-show*=EdLoans]', {timeout: 10000});
   let edLoansTable = await page.$('div.table-responsive[ng-show*=EdLoans] tbody');
   groups = await edLoansTable.$$eval('tr', (rows) => {
     // First row is table headers
     rows.shift();
 
+    // Aggregate all loan groups into a single object
     return rows.reduce((groups, tr) => {
+      // Group name and amount should be in first and fifth columns
       let cells = Array.from(tr.querySelectorAll('td')).map(td => td.innerText.trim());
       groups[cells[0]] = Number(cells[4].substring(1).replace(',', ''));
 
@@ -108,6 +113,7 @@ async function CollectPrincipalLoans() {
   });
 }
 
+function OutputData() {
   if (allPayments.length > 0) {
     // Reverse the payments as they were collected in Most Recent order
     allPayments.reverse();
@@ -119,6 +125,6 @@ async function CollectPrincipalLoans() {
 
     fs.writeFileSync('src/data/data.json', JSON.stringify(data, null, 1));
   };
+}
 
-  await browser.close();
 })();
