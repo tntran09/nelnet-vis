@@ -30,11 +30,11 @@ class App extends React.Component {
     return selectOptions;
   }
 
-  _selectDataset(option) {
+  _selectDataset(event) {
     this.setState(
       store.dispatch({
         type: 'loadDataset',
-        selectedDataset: ''
+        selectedDataset: event.target.value
       })
     );
   }
@@ -61,7 +61,7 @@ class App extends React.Component {
 
           <Grid item xs={3}>
             <Paper>
-              <Select>
+              <Select value={this.state.selectedDataset} onChange={this._selectDataset.bind(this)}>
                 {selectOptions}
               </Select>
             </Paper>

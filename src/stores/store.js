@@ -5,12 +5,9 @@ import PaymentsAppliedGenerator from '../generators/PaymentsAppliedGenerator';
 import PrincipalRemainingGenerator from '../generators/PrincipalRemainingGenerator';
 import Functions from '../models/Functions';
 
-// TODO: Select the first dataset in a reducer
-// Select the first dataset to initialize the app
-var initialData = Datasets[Object.keys(Datasets)[0]].data;
-// Run the an empty state through the first two fixed actions to create the initial state
 var initialState = loadDatasetOptions(Datasets);
-initialState = loadDatasetReducer(initialState, initialData);
+// Run the an empty state through the first two fixed actions to create the initial state
+initialState = loadDatasetReducer(initialState, Object.keys(Datasets)[0]);
 initialState = selectFunctionReducer(initialState, initialState.selectedFunction);
 const store = createStore(baseReducer, initialState);
 export default store;
@@ -19,8 +16,8 @@ function baseReducer(state = initialState, action) {
   // TODO: Use const action types
   switch(action.type) {
     case 'loadDataset':
-      return loadDatasetReducer(state, Datasets[action.datasetKey].data)
-      break;
+      var newState = loadDatasetReducer(state, action.selectedDataset);
+      return selectFunctionReducer(newState, newState.selectedFunction);
     case 'selectFunction':
       return selectFunctionReducer(state, action.selectedFunction);
     default:
@@ -42,8 +39,8 @@ function loadDatasetOptions(datasets) {
   };
 }
 
-function loadDatasetReducer(state, data) {
-  var {groups, payments} = data;
+function loadDatasetReducer(state, selectedDataset) {
+  var {groups, payments} = Datasets[selectedDataset].data;
 
   var groupNames = Object.keys(groups);
   var paymentsByGroup = {};
@@ -83,6 +80,7 @@ function loadDatasetReducer(state, data) {
     maxDate: maxDate,
     minDate: minDate,
     paymentsByGroup: paymentsByGroup,
+    selectedDataset: selectedDataset,
     // Variable portion of the state depending on the function selected
     selectedFunction: Functions.TotalApplied,
     seriesData: []
