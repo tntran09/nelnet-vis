@@ -4,6 +4,7 @@ import Grid from '@material-ui/core/Grid';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import Paper from '@material-ui/core/Paper';
+import Select from '@material-ui/core/Select';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import GraphSvg from './GraphSvg';
@@ -17,6 +18,27 @@ class App extends React.Component {
     store.subscribe(() => this.setState(store.getState()));
   }
 
+  _buildDataSelector(options) {
+    var selectOptions = [];
+    var keys = Object.keys(options);
+    for(let key of keys) {
+      selectOptions.push(
+        <MenuItem key={key} value={key}>{options[key]}</MenuItem>
+      )
+    }
+
+    return selectOptions;
+  }
+
+  _selectDataset(option) {
+    this.setState(
+      store.dispatch({
+        type: 'loadDataset',
+        selectedDataset: ''
+      })
+    );
+  }
+
   _selectFunction(functionName) {
     this.setState(
       store.dispatch({
@@ -27,6 +49,7 @@ class App extends React.Component {
   }
 
   render() {
+    var selectOptions = this._buildDataSelector(this.state.selectOptions);
     return (
       <div className="App" style={{overflow:'hidden'}}>
         <Grid container spacing={16}>
@@ -37,6 +60,11 @@ class App extends React.Component {
           </AppBar>
 
           <Grid item xs={3}>
+            <Paper>
+              <Select>
+                {selectOptions}
+              </Select>
+            </Paper>
             <Paper>
               <MenuList>
                 <MenuItem onClick={this._selectFunction.bind(this, Functions.TotalApplied)} selected={this.state.selectedFunction === Functions.TotalApplied}>Payments Applied</MenuItem>

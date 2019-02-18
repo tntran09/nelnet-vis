@@ -1,14 +1,16 @@
 import { createStore } from 'redux';
-// import { groups, payments } from '../data/data.json'; // Load whole dir
-import * as Datasets from '../data/Datasets';
-// need to map options selected on the UI to the specific data sets
+import Datasets from '../data/Datasets';
 import InterestAccruedGenerator from '../generators/InterestAccruedGenerator';
 import PaymentsAppliedGenerator from '../generators/PaymentsAppliedGenerator';
 import PrincipalRemainingGenerator from '../generators/PrincipalRemainingGenerator';
 import Functions from '../models/Functions';
 
+// TODO: Select the first dataset in a reducer
+// Select the first dataset to initialize the app
+var initialData = Datasets[Object.keys(Datasets)[0]].data;
 // Run the an empty state through the first two fixed actions to create the initial state
-var initialState = loadDatasetReducer({}, Datasets.data);
+var initialState = loadDatasetOptions(Datasets);
+initialState = loadDatasetReducer(initialState, initialData);
 initialState = selectFunctionReducer(initialState, initialState.selectedFunction);
 const store = createStore(baseReducer, initialState);
 export default store;
@@ -16,6 +18,9 @@ export default store;
 function baseReducer(state = initialState, action) {
   // TODO: Use const action types
   switch(action.type) {
+    case 'loadDataset':
+      return loadDatasetReducer(state, Datasets[action.datasetKey].data)
+      break;
     case 'selectFunction':
       return selectFunctionReducer(state, action.selectedFunction);
     default:
@@ -23,6 +28,18 @@ function baseReducer(state = initialState, action) {
   }
 
   return state;
+}
+
+function loadDatasetOptions(datasets) {
+  var keys = Object.keys(datasets);
+  var options = {};
+  for(let k of keys) {
+    options[k] = datasets[k].display;
+  }
+
+  return {
+    selectOptions: options
+  };
 }
 
 function loadDatasetReducer(state, data) {
