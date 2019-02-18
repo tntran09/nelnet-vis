@@ -1,6 +1,9 @@
 import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Grid from '@material-ui/core/Grid';
+import FormControl from '@material-ui/core/FormControl';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import Paper from '@material-ui/core/Paper';
@@ -60,19 +63,30 @@ class App extends React.Component {
           </AppBar>
 
           <Grid item xs={3}>
-            <Paper>
-              <Select value={this.state.selectedDataset} onChange={this._selectDataset.bind(this)}>
-                {selectOptions}
-              </Select>
-            </Paper>
-            <Paper>
-              <MenuList>
-                <MenuItem onClick={this._selectFunction.bind(this, Functions.TotalApplied)} selected={this.state.selectedFunction === Functions.TotalApplied}>Payments Applied</MenuItem>
-                <MenuItem onClick={this._selectFunction.bind(this, Functions.PrincipalRemaining)} selected={this.state.selectedFunction === Functions.PrincipalRemaining}>Principal Remaining</MenuItem>
-                <MenuItem onClick={this._selectFunction.bind(this, Functions.InterestAccrued)} selected={this.state.selectedFunction === Functions.InterestAccrued}>Interest Accrued</MenuItem>
-              </MenuList>
-            </Paper>
+            <Grid container spacing={8}>
+              <Grid item xs={12}>
+                <Paper style={{padding: '16px'}}>
+                  <FormControl>
+                  <InputLabel htmlFor="dataset-selector-placeholder" shrink>Data set</InputLabel>
+                  <Select name="selectedDataset" value={this.state.selectedDataset} onChange={this._selectDataset.bind(this)}>
+                    {selectOptions}
+                  </Select>
+                  </FormControl>
+                </Paper>
+              </Grid>
+              
+              <Grid item xs={12}>
+                <Paper>
+                  <MenuList>
+                    <MenuItem onClick={this._selectFunction.bind(this, Functions.TotalApplied)} selected={this.state.selectedFunction === Functions.TotalApplied}>Payments Applied</MenuItem>
+                    <MenuItem onClick={this._selectFunction.bind(this, Functions.PrincipalRemaining)} selected={this.state.selectedFunction === Functions.PrincipalRemaining}>Principal Remaining</MenuItem>
+                    <MenuItem onClick={this._selectFunction.bind(this, Functions.InterestAccrued)} selected={this.state.selectedFunction === Functions.InterestAccrued}>Interest Accrued</MenuItem>
+                  </MenuList>
+                </Paper>
+              </Grid>
+            </Grid>
           </Grid>
+
           <Grid item xs={8}>
             <Paper>
               <GraphSvg />
