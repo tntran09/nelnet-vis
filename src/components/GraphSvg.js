@@ -14,6 +14,7 @@ export default class GraphSvg extends React.Component {
   constructor(props) {
     super(props);
     this.state = this._getUIState(store.getState());
+    // Update the UI when the app state changes
     store.subscribe(() => this.setState(this._getUIState(store.getState())));
   }
 
@@ -24,7 +25,7 @@ export default class GraphSvg extends React.Component {
       <div style={{margin: 'auto', width: this.state.width, height: 680}}>
         <XYPlot width={this.state.width} height={this.state.height} xType="time" margin={{left: 50, right: 50}} style={{padding: '10px'}}>
           <XAxis tickValues={this.state.xTickValues} />
-          <YAxis />
+          <YAxis title="Amount ($)" />
           <HorizontalGridLines />
           <VerticalGridLines />
           {allSeries}

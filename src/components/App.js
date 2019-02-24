@@ -2,7 +2,6 @@ import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Grid from '@material-ui/core/Grid';
 import FormControl from '@material-ui/core/FormControl';
-import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
@@ -74,7 +73,7 @@ class App extends React.Component {
                   </FormControl>
                 </Paper>
               </Grid>
-              
+
               <Grid item xs={12}>
                 <Paper>
                   <MenuList>

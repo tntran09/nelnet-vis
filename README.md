@@ -11,8 +11,46 @@ module.exports = {
   PASSWORD: ''
 };
 ```
-2. Execute `node puppeteer.js` to collect the payment data and save to src/data/data.json
+2. Execute `node puppeteer.js` to collect the payment data and save to src/data/data.json. Rename as necessary when adding more data sets.
+
+## Adding more data
+1. Add a JSON file of payment logs to the /data directory. Should be in the following format (already exported in this format if using Puppeteer script)
+```
+[
+  "groups": {
+    "groupName": original loan amount (Number)
+    ...
+  },
+  "payments": [
+    {
+      "paymentDate": payment date (string),
+      "groupName": group name (string),
+      "appliedToPrincipal": (Number),
+      "appliedToPrincipal": (Number),
+      "appliedToFees": (Number)
+    },
+    ...
+  ]
+]
+```
+2. Import the data into /data/Datasets.js
+```
+import * as newData from './newData.json';
+```
+
+3. Add the imported data set into the aggregate set so that it will be included in the dropdown in the side menu
+```
+var allDatasets = {
+  ...
+  "newData": {
+    data: newData,
+    display: "My New Data Set"
+  }
+}
+```
 
 ## Rebuilding GH Pages
-`npm run build`
+```
+npm run build
+```
 Copy contents of /build into root and /static

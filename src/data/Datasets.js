@@ -1,14 +1,14 @@
 import * as data from './data.json';
-import * as data2 from './data2.json';
+import * as ttranAggregate from './ttran-agg'
 
 var allDatasets = {
   "ttran": {
     data: data,
     display: "Toan"
   },
-  "ttran2": {
-    data: data2,
-    display: "Toan 08/2018"
+  "ttranAggregate": {
+    data: ttranAggregate,
+    display: "Toan (Aggregate)"
   }
 }
 

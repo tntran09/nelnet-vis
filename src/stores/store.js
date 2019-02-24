@@ -16,6 +16,7 @@ function baseReducer(state = initialState, action) {
   // TODO: Use const action types
   switch(action.type) {
     case 'loadDataset':
+      // Load the data set and then the series data immediately
       var newState = loadDatasetReducer(state, action.selectedDataset);
       return selectFunctionReducer(newState, newState.selectedFunction);
     case 'selectFunction':
@@ -90,7 +91,7 @@ function loadDatasetReducer(state, selectedDataset) {
 function selectFunctionReducer(state, selectedFunction) {
   var seriesData = [];
 
-  switch(selectedFunction) { // if action == functionChanged, switch action.selectedFunction
+  switch(selectedFunction) {
     case Functions.InterestAccrued:
       seriesData = InterestAccruedGenerator.call(null, state);
       break;
