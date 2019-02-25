@@ -18,13 +18,14 @@ module.exports = {
 ```
 [
   "groups": {
-    "groupName": original loan amount (Number)
+    <group name>: original loan amount (Number),
+    "A": 1234.56
     ...
   },
   "payments": [
     {
       "paymentDate": payment date (string),
-      "groupName": group name (string),
+      "groupName": <group name> (string),
       "appliedToPrincipal": (Number),
       "appliedToPrincipal": (Number),
       "appliedToFees": (Number)
@@ -48,9 +49,11 @@ var allDatasets = {
   }
 }
 ```
+4. Commit
 
 ## Rebuilding GH Pages
+Github Pages is set up for the master branch.
 ```
 npm run build
 ```
-Copy contents of /build into root and /static
+Copy contents of /build into root and /static. Commit.

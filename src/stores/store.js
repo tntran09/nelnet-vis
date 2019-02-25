@@ -18,7 +18,7 @@ function baseReducer(state = initialState, action) {
     case 'loadDataset':
       // Load the data set and then the series data immediately
       var newState = loadDatasetReducer(state, action.selectedDataset);
-      return selectFunctionReducer(newState, newState.selectedFunction);
+      return selectFunctionReducer(newState, state.selectedFunction);
     case 'selectFunction':
       return selectFunctionReducer(state, action.selectedFunction);
     default:
