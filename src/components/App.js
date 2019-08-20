@@ -33,21 +33,17 @@ class App extends React.Component {
   }
 
   _selectDataset(event) {
-    this.setState(
-      store.dispatch({
-        type: 'loadDataset',
-        selectedDataset: event.target.value
-      })
-    );
+    store.dispatch({
+      type: 'loadDataset',
+      selectedDataset: event.target.value
+    });
   }
 
   _selectFunction(functionName) {
-    this.setState(
-      store.dispatch({
-        type: 'selectFunction',
-        selectedFunction: functionName
-      })
-    );
+    store.dispatch({
+      type: 'selectFunction',
+      selectedFunction: functionName
+    });
   }
 
   render() {
